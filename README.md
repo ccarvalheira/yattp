@@ -9,6 +9,7 @@ It uses yamux for the transport layer: https://github.com/hashicorp/yamux
 
 Run go get using a suitable GOPATH.
 ```
+go get github.com/hashicorp/yamux
 go get github.com/ccarvalheira/yattp
 ```
 
