@@ -16,15 +16,19 @@ go get github.com/ccarvalheira/yattp
 ## Usage
 
 ```
+package main
+
 import (
-  "net/http"
-  "github.com/ccarvalheira/yattp"
+	"fmt"
+	"github.com/ccarvalheira/yattp"
+	"log"
+	"net/http"
 )
 
 func main() {
-//we make a mux to handle our requests
-//you can also use gorillamux or your favourite mux that works with http.Server
-  mux := http.NewServeMux()
+	//we make a mux to handle our requests
+	//you can also use gorillamux or your favourite mux that works with http.Server
+	mux := http.NewServeMux()
 	mux.HandleFunc("/yattp", func(w http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/yattp" {
 			http.NotFound(w, req)
@@ -32,26 +36,30 @@ func main() {
 		}
 		fmt.Fprintf(w, "Hello!")
 	})
-	// we create the server and pass an address (same format as http.Server), a *yamux.Confing and the mux
+	// we create the server and pass an address (same format as http.Server), a *yamux.Config and the mux
 	//if you pass nil as the config, some (possibly) sane defaults will be used
-  ys := yattp.NewYaServer(":9102", nil, mux)
-  go ys.ListenAndServe()
-  
-  //we now build the client
-  // note that we need to pass the whole host:port address (or FQDN)
-  yc, err := yattp.NewYaClient("127.0.0.1:9102")
-  if err != nil {
-    log.Println("something went wrong creating the client")
-    return
-  }
-  resp, err := yc.DoRead("GET", "/yattp", nil) //or pass in some custom headers
-  // note that you may also use every method in http.Client
-  if err != nil {
-    log.Println("something happened while doing a request", err)
-  }
-  
-}
+	ys := yattp.NewYaServer(":9102", nil, mux)
+	go ys.ListenAndServe()
 
+	//we now build the client
+	// note that we need to pass the whole host:port address (or FQDN)
+	yc, err := yattp.NewYaClient("127.0.0.1:9102")
+	if err != nil {
+		log.Println("something went wrong creating the client")
+		return
+	}
+	resp, err := yc.DoRead("GET", "/yattp", nil) //or pass in some custom headers
+	// note that you may also use every method in http.Client
+	if err != nil {
+		log.Println("something happened while doing a request", err)
+		return
+	}
+	byteBody, err := yattp.ReadResponseBody(resp)
+	if err != nil {
+		log.Println("something happened while reading the body", err)
+	}
+	log.Println(string(byteBody))
+}
 ```
 
 ## Pros
