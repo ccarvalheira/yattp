@@ -8,14 +8,14 @@ It uses yamux for the transport layer: https://github.com/hashicorp/yamux
 ## Instalation
 
 Run go get using a suitable GOPATH.
-```
+```Bash
 go get github.com/hashicorp/yamux
 go get github.com/ccarvalheira/yattp
 ```
 
 ## Usage
 
-```
+```Go
 package main
 
 import (
